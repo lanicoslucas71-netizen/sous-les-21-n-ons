@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sous les 21 Néons — Find Your Artist</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --neon-pink: #ff2d78;
+      --neon-cyan: #00f5ff;
+      --neon-yellow: #ffe600;
+      --neon-purple: #c400ff;
+      --dark: #06020f;
+      --dark2: #0e0720;
+      --text: #f0eaff;
+      --card: rgba(255,255,255,0.04);
+      --border: rgba(255,255,255,0.08);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--dark);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ---- BACKGROUND ---- */
+    .bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .bg-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,245,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,245,255,0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+    .bg-glow {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.25;
+    }
+    .bg-glow.g1 { width:700px; height:700px; top:-200px; left:-200px; background: var(--neon-purple); }
+    .bg-glow.g2 { width:500px; height:500px; bottom:-150px; right:-150px; background: var(--neon-pink); }
+    .bg-glow.g3 { width:400px; height:400px; top:40%; left:50%; transform:translate(-50%,-50%); background: var(--neon-cyan); opacity: 0.1; }
+
+    /* ---- HEADER ---- */
+    header {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 60px 20px 20px;
+    }
+    .festival-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      color: var(--neon-cyan);
+      text-transform: uppercase;
+      margin-bottom: 18px;
+      opacity: 0.8;
+    }
+    .festival-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(64px, 12vw, 140px);
+      line-height: 0.9;
+      letter-spacing: 0.02em;
+      background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-pink) 50%, var(--neon-yellow) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: none;
+      filter: drop-shadow(0 0 40px rgba(255,45,120,0.4));
+    }
+    .festival-sub {
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.25em;
+      color: var(--neon-yellow);
+      text-transform: uppercase;
+      margin-top: 14px;
+      opacity: 0.7;
+    }
+
+    /* ---- INTRO ---- */
+    .intro {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      max-width: 520px;
+      margin: 40px auto 0;
+      padding: 0 24px;
+    }
+    .intro p {
+      font-size: 16px;
+      line-height: 1.7;
+      color: rgba(240,234,255,0.7);
+      font-weight: 300;
+    }
+    .intro strong { color: var(--text); font-weight: 600; }
+
+    /* ---- QUIZ ---- */
+    #quiz-section {
+      position: relative;
+      z-index: 10;
+      max-width: 680px;
+      margin: 60px auto 0;
+      padding: 0 20px 80px;
+    }
+
+    .progress-bar-wrap {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 48px;
+    }
+    .progress-seg {
+      flex: 1;
+      height: 3px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 2px;
+      transition: background 0.5s;
+    }
+    .progress-seg.done { background: var(--neon-cyan); box-shadow: 0 0 8px var(--neon-cyan); }
+    .progress-seg.active { background: var(--neon-pink); box-shadow: 0 0 8px var(--neon-pink); }
+
+    .question-block {
+      display: none;
+      animation: fadeUp 0.5s ease both;
+    }
+    .question-block.active { display: block; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .q-number {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.25em;
+      color: var(--neon-pink);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .q-text {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(28px, 5vw, 46px);
+      line-height: 1.1;
+      margin-bottom: 36px;
+      letter-spacing: 0.02em;
+    }
+
+    .options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 500px) {
+      .options { grid-template-columns: 1fr; }
+    }
+
+    .option-btn {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 22px 20px;
+      border-radius: 12px;
+      cursor: pointer;
+      text-align: left;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 400;
+      line-height: 1.4;
+      transition: all 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .option-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--neon-cyan), var(--neon-pink));
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+    .option-btn:hover {
+      border-color: var(--neon-cyan);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(0,245,255,0.15);
+    }
+    .option-btn:hover::before { opacity: 0.07; }
+    .option-btn span { position: relative; z-index: 1; }
+    .option-emoji {
+      display: block;
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    /* ---- RESULT ---- */
+    #result-section {
+      display: none;
+      position: relative;
+      z-index: 10;
+      max-width: 680px;
+      margin: 60px auto 0;
+      padding: 0 20px 80px;
+      animation: fadeUp 0.7s ease both;
+      text-align: center;
+    }
+    #result-section.show { display: block; }
+
+    .result-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      color: var(--neon-yellow);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      opacity: 0.8;
+    }
+    .result-artist {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(56px, 10vw, 110px);
+      line-height: 0.95;
+      letter-spacing: 0.02em;
+    }
+    .result-artist.mosimann {
+      background: linear-gradient(135deg, var(--neon-cyan) 0%, #7b2fff 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      filter: drop-shadow(0 0 30px rgba(0,245,255,0.5));
+    }
+    .result-artist.garrix {
+      background: linear-gradient(135deg, var(--neon-pink) 0%, var(--neon-yellow) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      filter: drop-shadow(0 0 30px rgba(255,45,120,0.5));
+    }
+    .result-artist.polo {
+      background: linear-gradient(135deg, #00ff87 0%, var(--neon-cyan) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      filter: drop-shadow(0 0 30px rgba(0,255,135,0.5));
+    }
+
+    .result-desc {
+      font-size: 16px;
+      color: rgba(240,234,255,0.65);
+      line-height: 1.7;
+      margin: 20px 0 40px;
+      font-weight: 300;
+    }
+    .result-desc strong { color: var(--text); font-weight: 600; }
+
+    /* ---- SPOTIFY ---- */
+    .spotify-wrap {
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 0 60px rgba(0,0,0,0.5), 0 0 0 1px var(--border);
+      margin-bottom: 40px;
+    }
+    .spotify-wrap iframe {
+      display: block;
+      width: 100%;
+      border: none;
+    }
+
+    /* ---- RESTART ---- */
+    .btn-restart {
+      display: inline-block;
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--dark);
+      background: var(--neon-cyan);
+      border: none;
+      padding: 16px 36px;
+      border-radius: 100px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 0 30px rgba(0,245,255,0.3);
+    }
+    .btn-restart:hover {
+      transform: scale(1.04);
+      box-shadow: 0 0 50px rgba(0,245,255,0.5);
+    }
+
+    /* ---- FOOTER ---- */
+    footer {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 20px;
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: rgba(255,255,255,0.2);
+    }
+
+    /* Scanline effect */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.03) 2px,
+        rgba(0,0,0,0.03) 4px
+      );
+      pointer-events: none;
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg">
+  <div class="bg-grid"></div>
+  <div class="bg-glow g1"></div>
+  <div class="bg-glow g2"></div>
+  <div class="bg-glow g3"></div>
+</div>
+
+<header>
+  <p class="festival-label">Festival ✦ Édition 2025</p>
+  <h1 class="festival-title">Sous les<br>21 Néons</h1>
+  <p class="festival-sub">Find your sound · Discover your artist</p>
+</header>
+
+<div class="intro">
+  <p>Tu viens pour la musique, mais <strong>quelle musique te définit vraiment ?</strong><br>
+  Réponds à 3 questions et découvre l'artiste fait pour toi ce soir.</p>
+</div>
+
+<!-- QUIZ -->
+<section id="quiz-section">
+  <div class="progress-bar-wrap">
+    <div class="progress-seg active" id="seg0"></div>
+    <div class="progress-seg" id="seg1"></div>
+    <div class="progress-seg" id="seg2"></div>
+  </div>
+
+  <!-- Q1 -->
+  <div class="question-block active" id="q0">
+    <p class="q-number">Question 01 / 03</p>
+    <h2 class="q-text">Quelle est ton énergie quand tu arrives en festival ?</h2>
+    <div class="options">
+      <button class="option-btn" onclick="answer(0, 'A')">
+        <span><span class="option-emoji">⚡</span>Je suis là pour exploser — dancefloor, lumières, tout à fond.</span>
+      </button>
+      <button class="option-btn" onclick="answer(0, 'B')">
+        <span><span class="option-emoji">🌊</span>Je me laisse porter par le son, j'attends que la nuit me prenne.</span>
+      </button>
+      <button class="option-btn" onclick="answer(0, 'C')">
+        <span><span class="option-emoji">🔥</span>Je veux une montée progressive, du groove avant le chaos.</span>
+      </button>
+      <button class="option-btn" onclick="answer(0, 'D')">
+        <span><span class="option-emoji">🌙</span>Je cherche une vibe intime, comme une bulle dans la foule.</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="question-block" id="q1">
+    <p class="q-number">Question 02 / 03</p>
+    <h2 class="q-text">Dans une soirée, tu es plutôt…</h2>
+    <div class="options">
+      <button class="option-btn" onclick="answer(1, 'A')">
+        <span><span class="option-emoji">🎤</span>Celui qui chante à tue-tête tous les lyrics.</span>
+      </button>
+      <button class="option-btn" onclick="answer(1, 'B')">
+        <span><span class="option-emoji">💃</span>Celui qui tient le dancefloor jusqu'au bout.</span>
+      </button>
+      <button class="option-btn" onclick="answer(1, 'C')">
+        <span><span class="option-emoji">🎧</span>Celui qui ferme les yeux et disparaît dans le son.</span>
+      </button>
+      <button class="option-btn" onclick="answer(1, 'D')">
+        <span><span class="option-emoji">🍹</span>Celui qui profite de l'ambiance sans se prendre la tête.</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="question-block" id="q2">
+    <p class="q-number">Question 03 / 03</p>
+    <h2 class="q-text">Quelle couleur de néon résume ta nuit idéale ?</h2>
+    <div class="options">
+      <button class="option-btn" onclick="answer(2, 'A')">
+        <span><span class="option-emoji">💙</span>Bleu électrique — drop brutal, basses qui fissurent le sol.</span>
+      </button>
+      <button class="option-btn" onclick="answer(2, 'B')">
+        <span><span class="option-emoji">🩷</span>Rose flashy — hits anthem, tout le monde sait les paroles.</span>
+      </button>
+      <button class="option-btn" onclick="answer(2, 'C')">
+        <span><span class="option-emoji">💚</span>Vert profond — deep et hypnotique, tu te perds dans le groove.</span>
+      </button>
+      <button class="option-btn" onclick="answer(2, 'D')">
+        <span><span class="option-emoji">💛</span>Jaune chaud — euphorie totale, sourires et sueur.</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- RESULT -->
+<section id="result-section">
+  <p class="result-label">✦ Ton artiste ce soir ✦</p>
+  <h2 class="result-artist" id="result-name"></h2>
+  <p class="result-desc" id="result-desc"></p>
+  <div class="spotify-wrap" id="spotify-embed"></div>
+  <button class="btn-restart" onclick="restart()">↩ Recommencer le quiz</button>
+</section>
+
+<footer>
+  © 2025 Sous les 21 Néons — Tous droits réservés
+</footer>
+
+<script>
+  const answers = [];
+
+  // Scoring: each answer gives points to artists
+  // artists: 0=Kungs, 1=Garrix, 2=Kolo & Pan
+  const scoreMap = [
+    // Q1: énergie arrivée
+    { A: [2, 3, 0], B: [1, 0, 3], C: [2, 1, 2], D: [0, 1, 3] },
+    // Q2: rôle en soirée
+    { A: [1, 2, 1], B: [1, 3, 1], C: [2, 1, 2], D: [1, 1, 2] },
+    // Q3: couleur de néon
+    { A: [1, 3, 1], B: [2, 2, 0], C: [1, 0, 3], D: [3, 1, 1] },
+  ];
+
+  const artists = [
+    {
+      name: 'Mosimann',
+      cls: 'mosimann',
+      desc: `Tu es un <strong>architecte de la nuit</strong> — tu attends le bon moment pour lâcher. Mosimann te correspond : ses productions house électrisantes et ses remixes dévastateurs te feront vibrer du début à la fin. La scène qui t'appartient.`,
+      spotify: `<iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/artist/7sAqpkrQBaOkddsv1Tz1XK?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>`
+    },
+    {
+      name: 'Martin Garrix',
+      cls: 'garrix',
+      desc: `Tu es <strong>l'énergie pure du festival</strong> — le genre à lever les mains avant même que le drop arrive. Martin Garrix est fait pour toi : EDM massive, anthems universels et drops qui font vibrer les 21 néons jusqu'à l'aube.`,
+      spotify: `<iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/60d24wfXkVzDSfLS6hyCjZ?utm_source=generator&theme=0" width="100%" height="352" allowfullscreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>`
+    },
+    {
+      name: 'Polo & Pan',
+      cls: 'polo',
+      desc: `Tu es <strong>l'âme de la nuit</strong> — tu danses les yeux fermés, tu ressens avant d'entendre. Polo & Pan te correspond parfaitement : electro pop poétique, groove organique et sons qui collent à la peau comme une nuit d'été.`,
+      spotify: `<iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/artist/45yEuthJ9yq1rNXAOpBnqM?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>`
+    }
+  ];
+
+  function answer(qIndex, choice) {
+    answers[qIndex] = choice;
+
+    // Move to next question or show result
+    if (qIndex < 2) {
+      document.getElementById(`q${qIndex}`).classList.remove('active');
+      document.getElementById(`q${qIndex + 1}`).classList.add('active');
+      document.getElementById(`seg${qIndex}`).classList.remove('active');
+      document.getElementById(`seg${qIndex}`).classList.add('done');
+      document.getElementById(`seg${qIndex + 1}`).classList.add('active');
+    } else {
+      showResult();
+    }
+  }
+
+  function showResult() {
+    // Tally scores
+    const scores = [0, 0, 0];
+    for (let i = 0; i < 3; i++) {
+      const pts = scoreMap[i][answers[i]];
+      scores[0] += pts[0];
+      scores[1] += pts[1];
+      scores[2] += pts[2];
+    }
+
+    // Find winner
+    let winner = 0;
+    if (scores[1] > scores[winner]) winner = 1;
+    if (scores[2] > scores[winner]) winner = 2;
+
+    const artist = artists[winner];
+
+    document.getElementById('quiz-section').style.display = 'none';
+    const res = document.getElementById('result-section');
+    res.classList.add('show');
+
+    const nameEl = document.getElementById('result-name');
+    nameEl.textContent = artist.name;
+    nameEl.className = 'result-artist ' + artist.cls;
+
+    document.getElementById('result-desc').innerHTML = artist.desc;
+    document.getElementById('spotify-embed').innerHTML = artist.spotify;
+
+    document.getElementById('seg2').classList.remove('active');
+    document.getElementById('seg2').classList.add('done');
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function restart() {
+    answers.length = 0;
+    document.querySelectorAll('.question-block').forEach(b => b.classList.remove('active'));
+    document.getElementById('q0').classList.add('active');
+    document.querySelectorAll('.progress-seg').forEach(s => { s.classList.remove('done', 'active'); });
+    document.getElementById('seg0').classList.add('active');
+    document.getElementById('quiz-section').style.display = 'block';
+    const res = document.getElementById('result-section');
+    res.classList.remove('show');
+    res.style.display = 'none';
+    setTimeout(() => { res.style.display = ''; }, 10);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
