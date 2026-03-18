@@ -28,6 +28,7 @@
       overflow-x: hidden;
     }
 
+    /* ---- BACKGROUND ---- */
     .bg {
       position: fixed;
       inset: 0;
@@ -53,6 +54,7 @@
     .bg-glow.g2 { width:500px; height:500px; bottom:-150px; right:-150px; background: var(--neon-pink); }
     .bg-glow.g3 { width:400px; height:400px; top:40%; left:50%; transform:translate(-50%,-50%); background: var(--neon-cyan); opacity: 0.1; }
 
+    /* ---- HEADER ---- */
     header {
       position: relative;
       z-index: 10;
@@ -77,6 +79,7 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+      text-shadow: none;
       filter: drop-shadow(0 0 40px rgba(255,45,120,0.4));
     }
     .festival-sub {
@@ -89,6 +92,7 @@
       opacity: 0.7;
     }
 
+    /* ---- INTRO ---- */
     .intro {
       position: relative;
       z-index: 10;
@@ -105,6 +109,7 @@
     }
     .intro strong { color: var(--text); font-weight: 600; }
 
+    /* ---- QUIZ ---- */
     #quiz-section {
       position: relative;
       z-index: 10;
@@ -201,6 +206,7 @@
       margin-bottom: 10px;
     }
 
+    /* ---- RESULT ---- */
     #result-section {
       display: none;
       position: relative;
@@ -253,14 +259,20 @@
     }
     .result-desc strong { color: var(--text); font-weight: 600; }
 
+    /* ---- SPOTIFY ---- */
     .spotify-wrap {
       border-radius: 18px;
       overflow: hidden;
       box-shadow: 0 0 60px rgba(0,0,0,0.5), 0 0 0 1px var(--border);
       margin-bottom: 40px;
     }
-    .spotify-wrap iframe { display: block; width: 100%; border: none; }
+    .spotify-wrap iframe {
+      display: block;
+      width: 100%;
+      border: none;
+    }
 
+    /* ---- RESTART ---- */
     .btn-restart {
       display: inline-block;
       font-family: 'Space Mono', monospace;
@@ -281,6 +293,7 @@
       box-shadow: 0 0 50px rgba(0,245,255,0.5);
     }
 
+    /* ---- FOOTER ---- */
     footer {
       position: relative;
       z-index: 10;
@@ -292,13 +305,17 @@
       color: rgba(255,255,255,0.2);
     }
 
+    /* Scanline effect */
     body::after {
       content: '';
       position: fixed;
       inset: 0;
       background: repeating-linear-gradient(
-        0deg, transparent, transparent 2px,
-        rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.03) 2px,
+        rgba(0,0,0,0.03) 4px
       );
       pointer-events: none;
       z-index: 999;
@@ -325,6 +342,7 @@
   Réponds à 3 questions et découvre l'artiste fait pour toi ce soir.</p>
 </div>
 
+<!-- QUIZ -->
 <section id="quiz-section">
   <div class="progress-bar-wrap">
     <div class="progress-seg active" id="seg0"></div>
@@ -332,40 +350,68 @@
     <div class="progress-seg" id="seg2"></div>
   </div>
 
+  <!-- Q1 -->
   <div class="question-block active" id="q0">
     <p class="q-number">Question 01 / 03</p>
     <h2 class="q-text">Quelle est ton énergie quand tu arrives en festival ?</h2>
     <div class="options">
-      <button class="option-btn" onclick="answer(0, 'A')"><span><span class="option-emoji">⚡</span>Je suis là pour exploser — dancefloor, lumières, tout à fond.</span></button>
-      <button class="option-btn" onclick="answer(0, 'B')"><span><span class="option-emoji">🌊</span>Je me laisse porter par le son, j'attends que la nuit me prenne.</span></button>
-      <button class="option-btn" onclick="answer(0, 'C')"><span><span class="option-emoji">🔥</span>Je veux une montée progressive, du groove avant le chaos.</span></button>
-      <button class="option-btn" onclick="answer(0, 'D')"><span><span class="option-emoji">🌙</span>Je cherche une vibe intime, comme une bulle dans la foule.</span></button>
+      <button class="option-btn" onclick="answer(0, 'A')">
+        <span><span class="option-emoji">⚡</span>Je suis là pour exploser — dancefloor, lumières, tout à fond.</span>
+      </button>
+      <button class="option-btn" onclick="answer(0, 'B')">
+        <span><span class="option-emoji">🌊</span>Je me laisse porter par le son, j'attends que la nuit me prenne.</span>
+      </button>
+      <button class="option-btn" onclick="answer(0, 'C')">
+        <span><span class="option-emoji">🔥</span>Je veux une montée progressive, du groove avant le chaos.</span>
+      </button>
+      <button class="option-btn" onclick="answer(0, 'D')">
+        <span><span class="option-emoji">🌙</span>Je cherche une vibe intime, comme une bulle dans la foule.</span>
+      </button>
     </div>
   </div>
 
+  <!-- Q2 -->
   <div class="question-block" id="q1">
     <p class="q-number">Question 02 / 03</p>
     <h2 class="q-text">Dans une soirée, tu es plutôt…</h2>
     <div class="options">
-      <button class="option-btn" onclick="answer(1, 'A')"><span><span class="option-emoji">🎤</span>Celui qui chante à tue-tête tous les lyrics.</span></button>
-      <button class="option-btn" onclick="answer(1, 'B')"><span><span class="option-emoji">💃</span>Celui qui tient le dancefloor jusqu'au bout.</span></button>
-      <button class="option-btn" onclick="answer(1, 'C')"><span><span class="option-emoji">🎧</span>Celui qui ferme les yeux et disparaît dans le son.</span></button>
-      <button class="option-btn" onclick="answer(1, 'D')"><span><span class="option-emoji">🍹</span>Celui qui profite de l'ambiance sans se prendre la tête.</span></button>
+      <button class="option-btn" onclick="answer(1, 'A')">
+        <span><span class="option-emoji">🎤</span>Celui qui chante à tue-tête tous les lyrics.</span>
+      </button>
+      <button class="option-btn" onclick="answer(1, 'B')">
+        <span><span class="option-emoji">💃</span>Celui qui tient le dancefloor jusqu'au bout.</span>
+      </button>
+      <button class="option-btn" onclick="answer(1, 'C')">
+        <span><span class="option-emoji">🎧</span>Celui qui ferme les yeux et disparaît dans le son.</span>
+      </button>
+      <button class="option-btn" onclick="answer(1, 'D')">
+        <span><span class="option-emoji">🍹</span>Celui qui profite de l'ambiance sans se prendre la tête.</span>
+      </button>
     </div>
   </div>
 
+  <!-- Q3 -->
   <div class="question-block" id="q2">
     <p class="q-number">Question 03 / 03</p>
     <h2 class="q-text">Quelle couleur de néon résume ta nuit idéale ?</h2>
     <div class="options">
-      <button class="option-btn" onclick="answer(2, 'A')"><span><span class="option-emoji">💙</span>Bleu électrique — drop brutal, basses qui fissurent le sol.</span></button>
-      <button class="option-btn" onclick="answer(2, 'B')"><span><span class="option-emoji">🩷</span>Rose flashy — hits anthem, tout le monde sait les paroles.</span></button>
-      <button class="option-btn" onclick="answer(2, 'C')"><span><span class="option-emoji">💚</span>Vert profond — deep et hypnotique, tu te perds dans le groove.</span></button>
-      <button class="option-btn" onclick="answer(2, 'D')"><span><span class="option-emoji">💛</span>Jaune chaud — euphorie totale, sourires et sueur.</span></button>
+      <button class="option-btn" onclick="answer(2, 'A')">
+        <span><span class="option-emoji">💙</span>Bleu électrique — drop brutal, basses qui fissurent le sol.</span>
+      </button>
+      <button class="option-btn" onclick="answer(2, 'B')">
+        <span><span class="option-emoji">🩷</span>Rose flashy — hits anthem, tout le monde sait les paroles.</span>
+      </button>
+      <button class="option-btn" onclick="answer(2, 'C')">
+        <span><span class="option-emoji">💚</span>Vert profond — deep et hypnotique, tu te perds dans le groove.</span>
+      </button>
+      <button class="option-btn" onclick="answer(2, 'D')">
+        <span><span class="option-emoji">💛</span>Jaune chaud — euphorie totale, sourires et sueur.</span>
+      </button>
     </div>
   </div>
 </section>
 
+<!-- RESULT -->
 <section id="result-section">
   <p class="result-label">✦ Ton artiste ce soir ✦</p>
   <h2 class="result-artist" id="result-name"></h2>
@@ -374,22 +420,29 @@
   <button class="btn-restart" onclick="restart()">↩ Recommencer le quiz</button>
 </section>
 
-<footer>© 2025 Sous les 21 Néons — Tous droits réservés</footer>
+<footer>
+  © 2025 Sous les 21 Néons — Tous droits réservés
+</footer>
 
 <script>
   const answers = [];
 
+  // Scoring: each answer gives points to artists
+  // artists: 0=Kungs, 1=Garrix, 2=Kolo & Pan
   const scoreMap = [
+    // Q1: énergie arrivée
     { A: [2, 3, 0], B: [1, 0, 3], C: [2, 1, 2], D: [0, 1, 3] },
+    // Q2: rôle en soirée
     { A: [1, 2, 1], B: [1, 3, 1], C: [2, 1, 2], D: [1, 1, 2] },
+    // Q3: couleur de néon
     { A: [1, 3, 1], B: [2, 2, 0], C: [1, 0, 3], D: [3, 1, 1] },
   ];
 
   const artists = [
     {
-      name: 'Kungs',
+      name: 'Mosimann',
       cls: 'kungs',
-      desc: `Tu es un <strong>architecte de la nuit</strong> — tu attends le bon moment pour lâcher. Kungs te correspond : ses mélodies profondes et sa house solaire te feront flotter entre introspection et euphorie. La scène qui t'appartient.`,
+      desc: `Tu es un <strong>architecte de la nuit</strong> — tu attends le bon moment pour lâcher. Mosimann te correspond : ses productions house électrisantes et ses remixes dévastateurs te feront vibrer du début à la fin. La scène qui t'appartient.`,
       spotify: `<iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/artist/7sAqpkrQBaOkddsv1Tz1XK?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>`
     },
     {
@@ -399,15 +452,17 @@
       spotify: `<iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/60d24wfXkVzDSfLS6hyCjZ?utm_source=generator&theme=0" width="100%" height="352" allowfullscreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>`
     },
     {
-      name: 'Kolo & Pan',
+      name: 'Polo & Pan',
       cls: 'kolo',
-      desc: `Tu es <strong>l'âme de la nuit</strong> — tu danses les yeux fermés, tu ressens avant d'entendre. Kolo & Pan te correspond parfaitement : deep house hypnotique, groove organique et sons qui collent à la peau comme une nuit d'été.`,
+      desc: `Tu es <strong>l'âme de la nuit</strong> — tu danses les yeux fermés, tu ressens avant d'entendre. Polo & Pan te correspond parfaitement : electro pop poétique, groove organique et sons qui collent à la peau comme une nuit d'été.`,
       spotify: `<iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/artist/45yEuthJ9yq1rNXAOpBnqM?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>`
     }
   ];
 
   function answer(qIndex, choice) {
     answers[qIndex] = choice;
+
+    // Move to next question or show result
     if (qIndex < 2) {
       document.getElementById(`q${qIndex}`).classList.remove('active');
       document.getElementById(`q${qIndex + 1}`).classList.add('active');
@@ -420,25 +475,36 @@
   }
 
   function showResult() {
+    // Tally scores
     const scores = [0, 0, 0];
     for (let i = 0; i < 3; i++) {
       const pts = scoreMap[i][answers[i]];
-      scores[0] += pts[0]; scores[1] += pts[1]; scores[2] += pts[2];
+      scores[0] += pts[0];
+      scores[1] += pts[1];
+      scores[2] += pts[2];
     }
+
+    // Find winner
     let winner = 0;
     if (scores[1] > scores[winner]) winner = 1;
     if (scores[2] > scores[winner]) winner = 2;
+
     const artist = artists[winner];
+
     document.getElementById('quiz-section').style.display = 'none';
     const res = document.getElementById('result-section');
     res.classList.add('show');
+
     const nameEl = document.getElementById('result-name');
     nameEl.textContent = artist.name;
     nameEl.className = 'result-artist ' + artist.cls;
+
     document.getElementById('result-desc').innerHTML = artist.desc;
     document.getElementById('spotify-embed').innerHTML = artist.spotify;
+
     document.getElementById('seg2').classList.remove('active');
     document.getElementById('seg2').classList.add('done');
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
